@@ -1,6 +1,6 @@
 {
-    "name": "KidzDev.ResponsiveFit",
-    "rootNamespace": "KidzDev.ResponsiveFit",
+    "name": "KidzDev.Unity.ResponsiveFit",
+    "rootNamespace": "KidzDev.Unity.ResponsiveFit",
     "references": [
         "UnityEngine.UI"
     ],

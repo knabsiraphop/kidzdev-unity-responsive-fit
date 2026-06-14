@@ -1,4 +1,4 @@
-# KidzDev Responsive Fit
+# KidzDev Unity Responsive Fit
 
 Responsive item sizing for Unity uGUI. Fits scroll and grid items to any screen
 using one of several strategies — items-per-view, aspect ratio, or a fixed
@@ -13,7 +13,7 @@ Add via Package Manager → *Add package from git URL*, or edit
 `Packages/manifest.json`:
 
 ```
-https://github.com/knabsiraphop/kidzdev-responsive-fit.git#v0.1.0
+https://github.com/knabsiraphop/kidzdev-unity-responsive-fit.git#v0.1.0
 ```
 
 ## Features
@@ -29,7 +29,7 @@ https://github.com/knabsiraphop/kidzdev-responsive-fit.git#v0.1.0
 `ResponsiveItemSizer` drives a `GridLayoutGroup` (or item rects) directly, so it
 works **standalone** on any uGUI grid. It also implements the
 `IScreenFitStrategy` seam, so it can feed
-[kidzdev-recyclable-scroll](https://github.com/knabsiraphop/kidzdev-recyclable-scroll)
+[kidzdev-unity-recyclable-scroll](https://github.com/knabsiraphop/kidzdev-unity-recyclable-scroll)
 as a per-item **size provider** — letting a recycled list size its rows to the
 screen without coupling the two packages.
 

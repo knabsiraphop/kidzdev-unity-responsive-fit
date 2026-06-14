@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KidzDev.ResponsiveFit
+namespace KidzDev.Unity.ResponsiveFit
 {
     // Build phases (incremental — only the scaffold exists today):
     //   Phase 1: ItemsPerView mode — divide the viewport by a target item count.

@@ -1,7 +1,7 @@
 {
-  "name": "com.kidzdev.responsive-fit",
+  "name": "com.kidzdev.unity.responsive-fit",
   "version": "0.1.0",
-  "displayName": "KidzDev Responsive Fit",
+  "displayName": "KidzDev Unity Responsive Fit",
   "description": "Responsive item sizing for Unity uGUI — fit scroll/grid items to any screen (items-per-view, aspect ratio, fixed columns, safe area).",
   "unity": "6000.0",
   "author": {

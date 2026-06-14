@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KidzDev.ResponsiveFit
+namespace KidzDev.Unity.ResponsiveFit
 {
     /// <summary>
     /// Computes the pixel size an item should occupy so a layout fits the

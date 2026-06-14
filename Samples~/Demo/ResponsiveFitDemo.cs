@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KidzDev.ResponsiveFit.Samples
+namespace KidzDev.Unity.ResponsiveFit.Samples
 {
     /// <summary>
     /// Minimal demo: re-fits a <see cref="ResponsiveItemSizer"/> on start and
