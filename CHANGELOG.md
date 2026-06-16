@@ -5,6 +5,30 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-06-16
+
+First stable release. A performance and correctness pass over the automatic
+re-fit path; no public API changes from `0.2.0`.
+
+### Changed
+
+- Automatic re-fits — `OnRectTransformDimensionsChange`, and now
+  `OnTransformChildrenChanged` — are coalesced to a single re-fit per frame via a
+  lazy `Canvas.willRenderCanvases` subscription, so the burst of callbacks a single
+  layout pass emits no longer drives one re-fit each. The subscription is held only
+  while a re-fit is pending, so an idle sizer costs nothing per frame.
+- A size + child-count guard skips the per-child sizing loop in
+  `ResponsiveHorizontalSizer` / `ResponsiveVerticalSizer` when neither the computed
+  size nor the child count changed (the grid sizer already short-circuited on
+  `cellSize`).
+
+### Fixed
+
+- Children added to or removed from a fixed-size container (one without a
+  `ContentSizeFitter`, whose rect never changes) are now sized automatically via
+  `OnTransformChildrenChanged`, instead of staying unsized until the next manual
+  `Refit()`.
+
 ## [0.2.0] - 2026-06-16
 
 Replaces the `0.1.0` scaffold with a working, RectTransform-based sizing system.

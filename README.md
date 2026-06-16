@@ -10,7 +10,7 @@ Add via Package Manager → *Add package from git URL*, or edit
 `Packages/manifest.json`:
 
 ```
-https://github.com/knabsiraphop/kidzdev-unity-responsive-fit.git#v0.2.0
+https://github.com/knabsiraphop/kidzdev-unity-responsive-fit.git#v1.0.0
 ```
 
 ## Components
