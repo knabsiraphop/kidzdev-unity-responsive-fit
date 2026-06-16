@@ -29,6 +29,9 @@ namespace KidzDev.Unity.ResponsiveFit
 
         private RectTransform _rectTransform;
         private Vector2 _cachedSize;
+        private Vector2 _appliedSize;
+        private int _appliedChildCount = -1;
+        private bool _subscribed;
 
         /// <summary>The most recent size produced by <see cref="Recalculate"/>.</summary>
         public Vector2 LastSize => _cachedSize;
@@ -52,9 +55,18 @@ namespace KidzDev.Unity.ResponsiveFit
 
         // --- lifecycle -----------------------------------------------------
 
-        private void OnEnable() => Refit();
+        private void OnEnable() => RefitIfChanged();
 
-        protected virtual void OnRectTransformDimensionsChange() => Refit();
+        private void OnDisable() => Unsubscribe();
+
+        // A single layout pass fires OnRectTransformDimensionsChange several times, and
+        // OnTransformChildrenChanged fires for children added/removed on a fixed-size
+        // container (which never changes our own rect). Instead of refitting on each, we
+        // mark a refit pending and coalesce to one per frame via Canvas.willRenderCanvases
+        // (QueueRefit/Flush) — which also ticks in edit mode under [ExecuteAlways].
+        protected virtual void OnRectTransformDimensionsChange() => QueueRefit();
+
+        protected virtual void OnTransformChildrenChanged() => QueueRefit();
 
         // --- public API ----------------------------------------------------
 
@@ -82,6 +94,59 @@ namespace KidzDev.Unity.ResponsiveFit
 
         /// <summary>Pushes the most recent <see cref="Recalculate"/> result onto the layout.</summary>
         public void Apply() => ApplyItemSize(_cachedSize);
+
+        /// <summary>
+        /// Recalculate, then <see cref="Apply"/> only when the result changed — the
+        /// size differs from the last applied one, or the child count changed (so
+        /// freshly-added items still get sized). Runs once per frame from the coalesced
+        /// <see cref="Flush"/> (and immediately from <see cref="OnEnable"/>); the guard
+        /// skips the per-child loop in the horizontal/vertical sizers when nothing
+        /// changed. Recalculation itself is allocation-free, so it always runs.
+        /// <see cref="Refit"/> stays an unconditional force for explicit callers.
+        /// </summary>
+        private void RefitIfChanged()
+        {
+            Recalculate();
+
+            int childCount = transform.childCount;
+            if (childCount == _appliedChildCount && Approximately(_cachedSize, _appliedSize))
+                return;
+
+            Apply();
+            _appliedSize = _cachedSize;
+            _appliedChildCount = childCount;
+        }
+
+        /// <summary>
+        /// Marks a refit pending and subscribes to <see cref="Canvas.willRenderCanvases"/>
+        /// once, so the burst of dimension/child callbacks a single layout pass emits
+        /// collapses into one <see cref="RefitIfChanged"/> at end of frame. Subscribing
+        /// only while pending keeps the idle per-frame cost at zero.
+        /// </summary>
+        private void QueueRefit()
+        {
+            if (_subscribed)
+                return;
+
+            Canvas.willRenderCanvases += Flush;
+            _subscribed = true;
+        }
+
+        private void Flush()
+        {
+            // Unsubscribe first so a refit that resizes our own rect re-queues cleanly.
+            Unsubscribe();
+            RefitIfChanged();
+        }
+
+        private void Unsubscribe()
+        {
+            if (!_subscribed)
+                return;
+
+            Canvas.willRenderCanvases -= Flush;
+            _subscribed = false;
+        }
 
         /// <inheritdoc />
         public Vector2 CalculateItemSize(Rect viewport, int index)
