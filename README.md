@@ -1,11 +1,8 @@
 # KidzDev Unity Responsive Fit
 
-Responsive item sizing for Unity uGUI. Fits scroll and grid items to any screen
-using one of several strategies — items-per-view, aspect ratio, or a fixed
-column count — with optional safe-area insets.
-
-> ⚠️ **Work in progress.** The package currently ships a compiling scaffold
-> (Phase 1 in progress). The sizing methods are stubs — see the roadmap below.
+Responsive item sizing for Unity uGUI. Sizes the items of a layout group so a
+fixed number fit the available **RectTransform viewport**, and re-fits
+automatically when that viewport changes (resize, rotation, safe-area panel).
 
 ## Install
 
@@ -13,45 +10,58 @@ Add via Package Manager → *Add package from git URL*, or edit
 `Packages/manifest.json`:
 
 ```
-https://github.com/knabsiraphop/kidzdev-unity-responsive-fit.git#v0.1.0
+https://github.com/knabsiraphop/kidzdev-unity-responsive-fit.git#v0.2.0
 ```
 
-## Features
+## Components
 
-- **Items-per-view** — size items so exactly *N* span the viewport.
-- **Aspect ratio** — lock each item to a fixed width:height ratio.
-- **Fixed columns** — lay out a set number of columns across the screen.
-- **Safe area** — optionally inset the layout for notches and rounded corners.
-- Re-fits automatically when the RectTransform's dimensions change.
+Add the sizer that matches your layout group — each counts items along its axis
+and re-fits on its own:
 
-## Use it standalone or as a size provider
+| Component | Layout group | You set | Item size |
+| --- | --- | --- | --- |
+| `ResponsiveGridSizer` | `GridLayoutGroup` | `Columns` × `Rows` | `cellSize` so that many cells fit the viewport |
+| `ResponsiveHorizontalSizer` | `HorizontalLayoutGroup` | `Columns` | width = viewport ÷ columns; height fills the row |
+| `ResponsiveVerticalSizer` | `VerticalLayoutGroup` | `Rows` | height = viewport ÷ rows; width fills the column |
 
-`ResponsiveItemSizer` drives a `GridLayoutGroup` (or item rects) directly, so it
-works **standalone** on any uGUI grid. It also implements the
-`IScreenFitStrategy` seam, so it can feed
+- **Aspect (optional)** — the grid's `AspectMode` derives one cell dimension from
+  the other; the horizontal/vertical sizers can lock the item to a fixed
+  `width:height` instead of filling the cross axis.
+- **Viewport Override** — when the sizer sits on oversized scroll *Content*, point
+  it at the *Viewport* RectTransform so it measures the visible area.
+
+## Use inside a ScrollRect
+
+Put the sizer on the ScrollRect **Content** (alongside its layout group and a
+`ContentSizeFitter`) and set **Viewport Override** to the ScrollRect's Viewport.
+The sizer measures the stable viewport while `ContentSizeFitter` grows Content to
+fit all items — so the list sizes to the screen and still scrolls, with no
+feedback loop. The bundled demo scene shows this for all three sizers.
+
+## Use as a size provider
+
+Every sizer implements `IViewportFitStrategy`:
+
+```
+Vector2 CalculateItemSize(Rect viewport, int index)
+```
+
+so another system — e.g.
 [kidzdev-unity-recyclable-scroll](https://github.com/knabsiraphop/kidzdev-unity-recyclable-scroll)
-as a per-item **size provider** — letting a recycled list size its rows to the
-screen without coupling the two packages.
-
-## Roadmap
-
-- **Phase 1** — `ItemsPerView` mode: divide the viewport by a target item count.
-- **Phase 2** — `AspectRatio` mode: fixed width:height per item.
-- **Phase 3** — `FixedColumns` mode: N columns across, derived height.
-- **Phase 4** — safe-area insets honoured across every mode.
+— can read per-item sizes for a recycled list without coupling the two packages.
 
 ## Usage
 
-1. Add a `ResponsiveItemSizer` to the RectTransform that owns your grid.
-2. Choose a `FitMode` and set its field (`itemsPerView`, `aspectRatio`, or
-   `columns`); toggle `respectSafeArea` as needed.
-3. Call `Recalculate()` then `Apply()` (the sizer also re-fits automatically on
-   dimension changes).
+1. Add a `GridLayoutGroup` / `Horizontal`- / `VerticalLayoutGroup` to your
+   container (for the H/V groups, enable *Child Control Width/Height* and disable
+   *Child Force Expand*).
+2. Add the matching `Responsive…Sizer` and set its `Columns` / `Rows`.
+3. It re-fits automatically on dimension changes; call `Refit()` to force one.
 
 ## Sample
 
-Import the **Demo** sample from the Package Manager to see a grid that resizes to
-fit the screen.
+Import the **Demo** sample from the Package Manager — a scene with all three
+sizers inside ScrollRects + ContentSizeFitter.
 
 ## License
 
