@@ -16,17 +16,6 @@ namespace KidzDev.Unity.ResponsiveFit
     [RequireComponent(typeof(GridLayoutGroup))]
     public sealed class ResponsiveGridSizer : ResponsiveItemSizer
     {
-        /// <summary>How (if at all) the cell keeps a fixed aspect, mirroring AspectRatioFitter.</summary>
-        public enum AspectMode
-        {
-            /// <summary>Off — width fits the columns and height fits the rows, independently.</summary>
-            None,
-            /// <summary>Width comes from the columns; height is derived from it via <c>aspectRatio</c>.</summary>
-            WidthControlsHeight,
-            /// <summary>Height comes from the rows; width is derived from it via <c>aspectRatio</c>.</summary>
-            HeightControlsWidth,
-        }
-
         [Header("Grid")]
         [Tooltip("Columns visible across the viewport at once.")]
         [Min(1)]

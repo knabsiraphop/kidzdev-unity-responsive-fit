@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,6 +36,9 @@ namespace KidzDev.Unity.ResponsiveFit
 
         /// <summary>The most recent size produced by <see cref="Recalculate"/>.</summary>
         public Vector2 LastSize => _cachedSize;
+
+        /// <summary>Raised when the computed size changes — either from a coalesced viewport resize or an explicit <see cref="Refit"/> call.</summary>
+        public event Action<Vector2> OnSizeChanged;
 
         /// <summary>Optional RectTransform to measure instead of our own. Re-fits on set.</summary>
         public RectTransform ViewportOverride { get => viewportOverride; set { viewportOverride = value; Refit(); } }
@@ -75,6 +79,12 @@ namespace KidzDev.Unity.ResponsiveFit
         {
             Recalculate();
             Apply();
+            // Sync the applied-size tracking so RefitIfChanged (which runs during the
+            // Canvas.ForceUpdateCanvases inside any Refresh triggered by this event) does
+            // not see a stale _appliedSize and re-fire OnSizeChanged a second time.
+            _appliedSize = _cachedSize;
+            _appliedChildCount = transform.childCount;
+            OnSizeChanged?.Invoke(_cachedSize);
         }
 
         /// <summary>Recomputes the target item size from the measured viewport.</summary>
@@ -115,6 +125,7 @@ namespace KidzDev.Unity.ResponsiveFit
             Apply();
             _appliedSize = _cachedSize;
             _appliedChildCount = childCount;
+            OnSizeChanged?.Invoke(_appliedSize);
         }
 
         /// <summary>

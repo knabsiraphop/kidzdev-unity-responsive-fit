@@ -5,6 +5,30 @@ All notable changes to this package are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-06-20
+
+### Added
+
+- `ResponsiveSizeCalculator` — a new `ResponsiveItemSizer` subclass that computes
+  item sizes for a fixed `Rows` × `Columns` fit without driving any layout group.
+  Designed for recyclable scroll views and other systems that manage item placement
+  themselves. Configure `padding` and `spacing` to match the consuming layout so the
+  size math stays consistent; subscribe to `OnSizeChanged` to react to viewport
+  resizes.
+- `OnSizeChanged` event on `ResponsiveItemSizer` — raised whenever the computed size
+  changes, either from a coalesced viewport resize or an explicit `Refit()` call.
+  Allows external systems to react to size changes without polling `LastSize`.
+
+### Changed
+
+- **Breaking:** `AspectMode` is now a top-level enum in the
+  `KidzDev.Unity.ResponsiveFit` namespace rather than a nested type inside
+  `ResponsiveGridSizer`. Any code referencing `ResponsiveGridSizer.AspectMode`,
+  `ResponsiveGridSizer.AspectMode.None`, `.WidthControlsHeight`, or
+  `.HeightControlsWidth` must be updated to use the top-level `AspectMode` enum
+  directly (e.g. `AspectMode.WidthControlsHeight`). The enum values and their
+  semantics are unchanged.
+
 ## [1.0.0] - 2026-06-16
 
 First stable release. A performance and correctness pass over the automatic
