@@ -26,6 +26,16 @@ https://github.com/knabsiraphop/kidzdev-unity-responsive-fit.git#v2.0.0
 
 ---
 
+## Sample
+
+Import the **Demo** sample from the Package Manager — a scene with all three
+layout-group sizers inside ScrollRects + ContentSizeFitter, demonstrating the
+Viewport Override setup.
+
+![Preview](Documentation~/preview.jpg)
+
+---
+
 ## Components
 
 ### `ResponsiveGridSizer`
@@ -323,14 +333,6 @@ a refit per callback, the sizers queue a single re-fit through
 `Canvas.willRenderCanvases` so the whole burst collapses into one per frame. The
 subscription is held only while a re-fit is pending, so an idle sizer costs nothing
 per frame.
-
----
-
-## Sample
-
-Import the **Demo** sample from the Package Manager — a scene with all three
-layout-group sizers inside ScrollRects + ContentSizeFitter, demonstrating the
-Viewport Override setup.
 
 ---
 
